@@ -1,0 +1,87 @@
+blueprint:
+  name: ZHA Aqara D1 (2 button)
+  description: Setup actions for three functions of the D1 with
+    Press, Double Press, and Hold (2 button).
+  domain: automation
+  input:
+    button_id:
+      name: Button
+      description: The button to configure.
+      selector:
+        device:
+          manufacturer: LUMI
+    press_action_left:
+      name: Press Action (left)
+      description: Action to perform on Press.
+      default: []
+      selector:
+        action: {}
+    double_press_action_left:
+      name: Double Press Action (left)
+      description: Action to perform on Double Press.
+      default: []
+      selector:
+        action: {}
+    hold_action_left:
+      name: Hold Action (left)
+      description: Action to perform on Hold.
+      default: []
+      selector:
+        action: {}
+    press_action_right:
+      name: Press Action (right)
+      description: Action to perform on Press.
+      default: []
+      selector:
+        action: {}
+    double_press_action_right:
+      name: Double Press Action (right)
+      description: Action to perform on Double Press.
+      default: []
+      selector:
+        action: {}
+    hold_action_right:
+      name: Hold Action (right)
+      description: Action to perform on Hold.
+      default: []
+      selector:
+        action: {}
+variables:
+  button_id: !input 'button_id'
+  press_action_left: !input 'press_action_left'
+  double_press_action_left: !input 'double_press_action_left'
+  hold_action_left: !input 'hold_action_left'
+  press_action_right: !input 'press_action_right'
+  double_press_action_right: !input 'double_press_action_right'
+  hold_action_right: !input 'hold_action_right'
+trigger:
+- platform: event
+  event_type: zha_event
+  event_data:
+    device_id: !input 'button_id'
+action:
+- choose:
+  - conditions:
+    - condition: template
+      value_template: '{{ trigger.event.data.command == "left_single" }}'
+    sequence: !input 'press_action_left'
+  - conditions:
+    - condition: template
+      value_template: '{{ trigger.event.data.command == "left_double" }}'
+    sequence: !input 'double_press_action_left'
+  - conditions:
+    - condition: template
+      value_template: '{{ trigger.event.data.command == "left_long press" }}'
+    sequence: !input 'hold_action_left'
+  - conditions:
+    - condition: template
+      value_template: '{{ trigger.event.data.command == "right_single" }}'
+    sequence: !input 'press_action_right'
+  - conditions:
+    - condition: template
+      value_template: '{{ trigger.event.data.command == "right_double" }}'
+    sequence: !input 'double_press_action_right'
+  - conditions:
+    - condition: template
+      value_template: '{{ trigger.event.data.command == "right_long press" }}'
+    sequence: !input 'hold_action_right'
